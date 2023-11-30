@@ -3,6 +3,9 @@ using BooksManagement.API.Persistence;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using AutoMapper;
+using BooksManagement.API.Models.ViewModels;
+using BooksManagement.API.Models.InputModels;
 
 namespace BooksManagement.API.Controllers
 {
@@ -11,10 +14,12 @@ namespace BooksManagement.API.Controllers
     public class UsersController : ControllerBase
     {
         private readonly BooksManagementDbContext _context;
+        private readonly IMapper _mapper;
 
-        public UsersController(BooksManagementDbContext context)
+        public UsersController(BooksManagementDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -22,7 +27,10 @@ namespace BooksManagement.API.Controllers
         {
             var users = _context.Users.ToList();
 
-            return Ok(users);
+            var viewModel = _mapper.Map<List<UserViewModel>>(users);
+
+            return Ok(viewModel);
+
         }
 
         [HttpGet("{id}")]
@@ -34,12 +42,16 @@ namespace BooksManagement.API.Controllers
             {
                 return NotFound();
             }
-            return Ok(user);
+            var viewModel = _mapper.Map<UserViewModel>(user);
+
+            return Ok(viewModel);
         }
 
         [HttpPost]
-        public IActionResult Post(User user)
+        public IActionResult Post(UserInputModel input)
         {
+            var user = _mapper.Map<User>(input);
+
             _context.Users.Add(user);
             _context.SaveChanges();
 
@@ -47,7 +59,7 @@ namespace BooksManagement.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(int id, User updatedUser)
+        public IActionResult Update(int id, UserInputModel updatedUser)
         {
             var user = _context.Users.SingleOrDefault(u => u.Id == id);
 

@@ -26,10 +26,5 @@ namespace BooksManagement.API.Entities
             UserId = userId;
             BookId = bookId;
         }
-
-        public void Renewal(DateTime date)
-        {
-            EndDate = date;
-        }
     }
 }

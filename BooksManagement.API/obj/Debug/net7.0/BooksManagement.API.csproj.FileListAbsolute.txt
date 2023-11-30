@@ -74,3 +74,5 @@ C:\dev\BooksManagement\BooksManagement.API\obj\Debug\net7.0\refint\BooksManageme
 C:\dev\BooksManagement\BooksManagement.API\obj\Debug\net7.0\BooksManagement.API.pdb
 C:\dev\BooksManagement\BooksManagement.API\obj\Debug\net7.0\BooksManagement.API.genruntimeconfig.cache
 C:\dev\BooksManagement\BooksManagement.API\obj\Debug\net7.0\ref\BooksManagement.API.dll
+C:\dev\BooksManagement\BooksManagement.API\bin\Debug\net7.0\AutoMapper.dll
+C:\dev\BooksManagement\BooksManagement.API\bin\Debug\net7.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll

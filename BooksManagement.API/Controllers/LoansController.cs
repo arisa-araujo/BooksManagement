@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using AutoMapper;
+using BooksManagement.API.Models.ViewModels;
+using BooksManagement.API.Models.InputModels;
 
 
 namespace BooksManagement.API.Controllers
@@ -14,9 +17,12 @@ namespace BooksManagement.API.Controllers
     {
         private readonly BooksManagementDbContext _context;
 
-        public LoansController(BooksManagementDbContext context)
+        private readonly IMapper _mapper;
+
+        public LoansController(BooksManagementDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -28,7 +34,9 @@ namespace BooksManagement.API.Controllers
                 .Include(u => u.User)
                 .ToList();
 
-            return Ok(loans);
+            var viewModel = _mapper.Map<List<LoanViewModel>>(loans);
+
+            return Ok(viewModel);
         }
 
         [HttpGet("{id}")]
@@ -44,12 +52,17 @@ namespace BooksManagement.API.Controllers
             {
                 return NotFound();
             }
+            
+            var viewModel = _mapper.Map<LoanViewModel>(loan);
+
             return Ok(loan);
         }
 
         [HttpPost]
-        public IActionResult Post(BookLoan loan)
+        public IActionResult Post(LoanInputModel input)
         {
+            var loan = _mapper.Map<BookLoan>(input);
+        
             _context.BookLoans.Add(loan);
             _context.SaveChanges();
 
@@ -57,7 +70,7 @@ namespace BooksManagement.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(int id, BookLoan updatedLoan)
+        public IActionResult Update(int id, LoanInputModel updatedLoan)
         {
             var loan = _context.BookLoans.SingleOrDefault(l => l.Id == id);
 
