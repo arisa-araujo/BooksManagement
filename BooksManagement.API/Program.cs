@@ -1,3 +1,4 @@
+using BooksManagement.API.Mappers;
 using BooksManagement.API.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,6 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("BooksManagement");
 
 builder.Services.AddDbContext<BooksManagementDbContext>(o => o.UseSqlServer(connectionString));
+
+builder.Services.AddAutoMapper(typeof(BookProfile).Assembly);
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

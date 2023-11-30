@@ -3,6 +3,9 @@ using BooksManagement.API.Persistence;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using AutoMapper;
+using BooksManagement.API.Models.ViewModels;
+using BooksManagement.API.Models.InputModels;
 
 
 namespace BooksManagement.API.Controllers
@@ -13,9 +16,12 @@ namespace BooksManagement.API.Controllers
     {
         private readonly BooksManagementDbContext _context;
 
-        public BooksController(BooksManagementDbContext context)
+        private readonly IMapper _mapper;
+
+        public BooksController(BooksManagementDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -23,7 +29,9 @@ namespace BooksManagement.API.Controllers
         {
             var books = _context.Books.ToList();
 
-            return Ok(books);
+            var viewModel = _mapper.Map<List<BookViewModel>>(books);
+
+            return Ok(viewModel);
         }
 
         [HttpGet("{id}")]
@@ -35,12 +43,17 @@ namespace BooksManagement.API.Controllers
             {
                 return NotFound();
             }
-            return Ok(book);
+
+            var viewModel = _mapper.Map<BookViewModel>(book);
+
+            return Ok(viewModel);
         }
 
         [HttpPost]
-        public IActionResult Post(Book book)
+        public IActionResult Post(BookInputModel input)
         {
+            var book = _mapper.Map<Book>(input);
+
             _context.Books.Add(book);
             _context.SaveChanges();
 
@@ -48,7 +61,7 @@ namespace BooksManagement.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(int id, Book updatedBook)
+        public IActionResult Update(int id, BookInputModel input)
         {
             var book = _context.Books.SingleOrDefault(b => b.Id == id);
             
@@ -57,7 +70,7 @@ namespace BooksManagement.API.Controllers
                 return NotFound();
             }
 
-            book.UpdateBook(updatedBook.Title, updatedBook.Author, updatedBook.PublicationYear, updatedBook.NumberOfPages, updatedBook.Isbn);
+            book.UpdateBook(input.Title, input.Author, input.PublicationYear, input.NumberOfPages, input.Isbn);
 
             _context.Books.Update(book);
 
